@@ -11,7 +11,7 @@
           class="ma-1"
           @click:close="removeFilter(index)"
         >
-          {{ filter.column }}: {{ filter.value }}
+          {{ getColumnTitle(filter.column) }}: {{ filter.value }}
         </v-chip>
       </div>
 
@@ -19,7 +19,9 @@
       <div class="d-flex flex-wrap align-center gap-2">
         <v-select
           v-model="selectedColumn"
-          :items="columns"
+          :items="availableColumns"
+          item-title="title"
+          item-value="key"
           label="Select column"
           variant="outlined"
           density="comfortable"
@@ -53,18 +55,18 @@
 <script setup>
 import { ref, computed } from 'vue';
 
-const emit = defineEmits(['update:filters']);
+const props = defineProps({
+  availableColumns: {
+    type: Array,
+    required: true,
+    default: () => [],
+    validator: (value) => {
+      return value.every(item => 'key' in item && 'title' in item);
+    }
+  }
+});
 
-const columns = [
-  { title: 'Customer ID', value: 'CustomerId' },
-  { title: 'Name', value: 'CustomerName' },
-  { title: 'Email', value: 'Email' },
-  { title: 'City', value: 'AddressCity' },
-  { title: 'Country', value: 'AddressCountry' },
-  { title: 'VAT Number', value: 'VatNumber' },
-  { title: 'Language', value: 'Language' },
-  { title: 'Created Date', value: 'CreatedTS' }
-];
+const emit = defineEmits(['update:filters']);
 
 const selectedColumn = ref(null);
 const filterValue = ref('');
@@ -74,6 +76,11 @@ const canAddFilter = computed(() =>
   selectedColumn.value && filterValue.value.trim()
 );
 
+const getColumnTitle = (columnKey) => {
+  const column = props.availableColumns.find(col => col.key === columnKey);
+  return column ? column.title : columnKey;
+};
+
 const addFilter = () => {
   if (canAddFilter.value) {
     activeFilters.value.push({
@@ -81,7 +88,7 @@ const addFilter = () => {
       value: filterValue.value.trim()
     });
     emit('update:filters', activeFilters.value);
-    // Reset inputs
+
     filterValue.value = '';
     selectedColumn.value = null;
   }
