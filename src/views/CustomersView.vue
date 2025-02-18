@@ -208,14 +208,13 @@ const handleSearch = async (query) => {
 }
 
 const handleFilters = async (newFilters) => {
-  filters.value = newFilters
+  filters.value = [...newFilters];
   pagination.value.currentPage = 1
   await fetchCustomers()
 }
 
 const handlePageChange = async (newPage) => {
   console.log('Changing to page:', newPage)
-  filters.value = [...newFilters];
   pagination.value.currentPage = newPage
   await fetchCustomers()
 }
