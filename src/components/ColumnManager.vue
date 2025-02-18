@@ -64,7 +64,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-// Required columns that can't be hidden
+
 const REQUIRED_COLUMNS = ['id']
 
 const selectedColumns = computed({
@@ -72,7 +72,6 @@ const selectedColumns = computed({
   set: (value) => emit('update:modelValue', value)
 })
 
-// Group columns by category
 const columnGroups = computed(() => {
   return props.columns.reduce((groups, column) => {
     const category = column.category || 'General'
@@ -93,10 +92,8 @@ const isRequired = (columnKey) => REQUIRED_COLUMNS.includes(columnKey)
 
 const selectAll = () => {
   if (allSelected.value) {
-    // Deselect all except required columns
     selectedColumns.value = [...REQUIRED_COLUMNS]
   } else {
-    // Select all columns
     selectedColumns.value = props.columns.map(col => col.key)
   }
 }

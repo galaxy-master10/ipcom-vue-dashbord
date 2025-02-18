@@ -1,7 +1,7 @@
 
 <template>
   <div>
-    <!-- Search and Filter Section -->
+
     <div class="d-flex gap-4 mb-4">
       <search-panel
         @search="handleSearch"
@@ -20,16 +20,16 @@
       </v-btn>
     </div>
 
-    <!-- Filter Panel -->
+
     <v-expand-transition>
       <filter-panel
         v-if="showFilters"
         @update:filters="handleFilters"
         :available-columns="filterableColumns"
+        v-model="filters"
       ></filter-panel>
     </v-expand-transition>
 
-    <!-- Error Message -->
     <v-alert
       v-if="error"
       type="error"
@@ -68,17 +68,14 @@
           </v-toolbar>
         </template>
 
-        <!-- Custom Cell Templates -->
         <template v-slot:[`item.createdTS`]="{ item }">
           {{ formatDate(item.createdTS) }}
         </template>
 
-        <!-- No Data Template -->
         <template v-slot:no-data>
           {{ loading ? 'Loading...' : 'No data available' }}
         </template>
 
-        <!-- Bottom Pagination -->
         <template v-slot:bottom>
           <div class="text-center pt-2">
             <v-pagination
@@ -117,7 +114,6 @@ const pagination = ref({
   totalPages: 0
 })
 
-// Column Definitions
 const allHeaders = [
   { title: 'ID', key: 'id', sortable: true, category: 'Primary' },
   { title: 'Customer ID', key: 'customerId', sortable: true, category: 'Primary' },
@@ -160,8 +156,8 @@ const filterableColumns = computed(() => {
   return allHeaders
     .filter(header => header.sortable && visibleColumnKeys.value.includes(header.key))
     .map(header => ({
-      title: header.title,  // Changed from 'text' to 'title' to match component expectations
-      key: header.key      // Changed from 'value' to 'key' to match component expectations
+      title: header.title,
+      key: header.key
     }))
 })
 

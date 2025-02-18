@@ -2,7 +2,7 @@
 <template>
   <v-card class="mb-4" flat>
     <v-card-text>
-      <!-- Active Filters -->
+
       <div class="d-flex flex-wrap gap-2 mb-4" v-if="activeFilters.length">
         <v-chip
           v-for="(filter, index) in activeFilters"
@@ -15,7 +15,7 @@
         </v-chip>
       </div>
 
-      <!-- Filter Controls -->
+
       <div class="d-flex flex-wrap align-center gap-2">
         <v-select
           v-model="selectedColumn"
@@ -53,9 +53,14 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 
 const props = defineProps({
+  modelValue: {
+    type: Array,
+    required: true,
+    default: () => []
+  },
   availableColumns: {
     type: Array,
     required: true,
@@ -66,11 +71,12 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['update:filters']);
+const emit = defineEmits(['update:filters', 'update:modelValue']);
 
 const selectedColumn = ref(null);
 const filterValue = ref('');
-const activeFilters = ref([]);
+
+const activeFilters = ref([...props.modelValue]);
 
 const canAddFilter = computed(() =>
   selectedColumn.value && filterValue.value.trim()
@@ -83,10 +89,14 @@ const getColumnTitle = (columnKey) => {
 
 const addFilter = () => {
   if (canAddFilter.value) {
-    activeFilters.value.push({
+    const newFilter = {
       column: selectedColumn.value,
       value: filterValue.value.trim()
-    });
+    };
+    activeFilters.value.push(newFilter);
+    const newFilters = [...activeFilters.value];
+
+    emit('update:modelValue', newFilters);
     emit('update:filters', activeFilters.value);
 
     filterValue.value = '';
@@ -96,6 +106,13 @@ const addFilter = () => {
 
 const removeFilter = (index) => {
   activeFilters.value.splice(index, 1);
+  const newFilters = [...activeFilters.value];
+
   emit('update:filters', activeFilters.value);
+  emit('update:modelValue', newFilters);
 };
+
+onMounted(() => {
+  activeFilters.value = [...props.modelValue];
+});
 </script>
