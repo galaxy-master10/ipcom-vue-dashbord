@@ -2,19 +2,17 @@
 <template>
   <v-card class="mb-4" flat>
     <v-card-text>
-
       <div class="d-flex flex-wrap gap-2 mb-4" v-if="activeFilters.length">
         <v-chip
           v-for="(filter, index) in activeFilters"
-          :key="index"
-          closable
-          class="ma-1"
-          @click:close="removeFilter(index)"
+          :key="filter.column + '-' + filter.value"
+        closable
+        class="ma-1"
+        @click:close="removeFilter(index)"
         >
-          {{ getColumnTitle(filter.column) }}: {{ filter.value }}
+        {{ getColumnTitle(filter.column) }}: {{ filter.value }}
         </v-chip>
       </div>
-
 
       <div class="d-flex flex-wrap align-center gap-2">
         <v-select
@@ -53,7 +51,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue'
 
 const props = defineProps({
   modelValue: {
@@ -111,6 +109,13 @@ const removeFilter = (index) => {
   emit('update:filters', updatedFilters);
   emit('update:modelValue', updatedFilters);
 };
+
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    activeFilters.value = [...newVal];
+  }
+);
 
 onMounted(() => {
   activeFilters.value = [...props.modelValue];

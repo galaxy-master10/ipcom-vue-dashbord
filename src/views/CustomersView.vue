@@ -1,13 +1,7 @@
 
 <template>
   <div>
-
-    <div class="d-flex gap-4 mb-4">
-      <search-panel
-        @search="handleSearch"
-        class="flex-grow-1"
-      ></search-panel>
-
+    <div>
       <v-btn
         color="primary"
         @click="showFilters = !showFilters"
@@ -20,7 +14,6 @@
       </v-btn>
     </div>
 
-
     <v-expand-transition>
       <filter-panel
         v-if="showFilters"
@@ -29,7 +22,7 @@
         v-model="filters"
       ></filter-panel>
     </v-expand-transition>
-
+    <v-divider class="mb-4 mt-4"></v-divider>
     <v-alert
       v-if="error"
       type="error"
@@ -42,7 +35,7 @@
     <v-card>
       <v-data-table
         :headers="visibleHeaders"
-        :items="customers"
+        :items="filteredCustomers"
         :loading="loading"
         :items-length="pagination.totalItems"
         :page="pagination.currentPage"
@@ -93,7 +86,6 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import SearchPanel from '../components/SearchPanel.vue'
 import FilterPanel from '../components/FilterPanel.vue'
 import ColumnManager from '../components/ColumnManager.vue'
 import { CustomerService } from '../services/CustomerService.js'
@@ -201,11 +193,24 @@ const fetchCustomers = async () => {
   }
 }
 
+const filteredCustomers = computed(() => {
+  if (!search.value) return customers.value;
+
+  const searchTerm = search.value.toLowerCase();
+  return customers.value.filter(customer => {
+    return visibleHeaders.value.some(header => {
+      const value = customer[header.key];
+      if (value === null || value === undefined) return false;
+      return String(value).toLowerCase().includes(searchTerm);
+    });
+  });
+});
+
 const handleSearch = async (query) => {
-  search.value = query
-  pagination.value.currentPage = 1
-  await fetchCustomers()
-}
+  search.value = query || '';
+  pagination.value.currentPage = 1;
+  await fetchCustomers();
+};
 
 const handleFilters = async (newFilters) => {
   filters.value = [...newFilters];
