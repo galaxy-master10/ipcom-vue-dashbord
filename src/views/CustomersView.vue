@@ -63,12 +63,11 @@
             </v-btn>
           </v-toolbar>
         </template>
-        <!--
-        <template #item.CreatedTS="{ item }">
-                  {{ formatDate(item.raw.CreatedTS) }}
 
-                </template>
-        -->
+        <template v-slot:[`item.createdTS`]="{ item }">
+          {{ formatDate(item.createdTS) }}
+        </template>
+
 
 
 
