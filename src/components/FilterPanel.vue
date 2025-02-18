@@ -105,11 +105,11 @@ const addFilter = () => {
 };
 
 const removeFilter = (index) => {
-  activeFilters.value.splice(index, 1);
-  const newFilters = [...activeFilters.value];
+  const updatedFilters = activeFilters.value.filter((_, i) => i !== index);
+  activeFilters.value = updatedFilters;
 
-  emit('update:filters', activeFilters.value);
-  emit('update:modelValue', newFilters);
+  emit('update:filters', updatedFilters);
+  emit('update:modelValue', updatedFilters);
 };
 
 onMounted(() => {

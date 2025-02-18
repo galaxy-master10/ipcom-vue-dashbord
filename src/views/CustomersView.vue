@@ -215,6 +215,7 @@ const handleFilters = async (newFilters) => {
 
 const handlePageChange = async (newPage) => {
   console.log('Changing to page:', newPage)
+  filters.value = [...newFilters];
   pagination.value.currentPage = newPage
   await fetchCustomers()
 }
