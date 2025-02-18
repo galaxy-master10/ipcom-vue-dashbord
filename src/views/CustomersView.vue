@@ -18,7 +18,7 @@
       <filter-panel
         v-if="showFilters"
         @update:filters="handleFilters"
-        :available-columns="filterableColumns"
+        :available-columns="visibleHeaders"
         v-model="filters"
       ></filter-panel>
     </v-expand-transition>
