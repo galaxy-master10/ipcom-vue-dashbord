@@ -4,7 +4,7 @@
       <v-list>
         <v-list-item class="mb-6">
           <v-list-item-title class="text-h5 text-primary">
-            Ipcom-db Dashboard
+            Dashboard DB..
           </v-list-item-title>
         </v-list-item>
 
@@ -23,7 +23,7 @@
 
     <v-app-bar>
       <v-app-bar-nav-icon @click="toggleDrawer"></v-app-bar-nav-icon>
-      <v-app-bar-title>Application</v-app-bar-title>
+      <v-app-bar-title>{{currentPageTitle}}</v-app-bar-title>
 
       <v-spacer></v-spacer>
 
@@ -43,9 +43,12 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useTheme } from 'vuetify'
+import { useRoute } from 'vue-router'
 
 const drawer = ref(true)
 const theme = useTheme()
+const route = useRoute()
+
 
 const isDark = computed(() => theme.global.current.value.dark)
 
@@ -76,7 +79,12 @@ const menuItems = [
     path: '/customers'
   }
 ]
-
+// Compute current page title based on route
+const currentPageTitle = computed(() => {
+  const currentPath = route.path
+  const menuItem = menuItems.find(item => item.path === currentPath)
+  return menuItem ? menuItem.title : 'Dashboard DB..'
+})
 const toggleDrawer = () => {
   drawer.value = !drawer.value
 }
