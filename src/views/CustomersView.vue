@@ -70,7 +70,22 @@
         </template>
 
         <template v-slot:bottom>
-          <div class="text-center pt-2">
+          <div class="d-flex align-center justify-space-between px-4">
+            <!-- Items per page dropdown -->
+            <div class="d-flex align-center">
+              <span class="mr-2">Rows per page:</span>
+              <v-select
+                v-model="pagination.pageSize"
+                :items="[5, 10, 15, 20, 25, 50]"
+                variant="outlined"
+                density="compact"
+                hide-details
+                class="items-per-page-select"
+                style="width: 90px"
+                @update:model-value="handleItemsPerPageChange"
+              ></v-select>
+            </div>
+
             <v-pagination
               v-model="pagination.currentPage"
               :length="pagination.totalPages"
