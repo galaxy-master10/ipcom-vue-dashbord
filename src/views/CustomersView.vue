@@ -76,7 +76,7 @@
               <span class="mr-2">Rows per page:</span>
               <v-select
                 v-model="pagination.pageSize"
-                :items="[5, 10, 15, 20, 25, 50]"
+                :items="[5, 10, 15, 20, 25, 50,100]"
                 variant="outlined"
                 density="compact"
                 hide-details
