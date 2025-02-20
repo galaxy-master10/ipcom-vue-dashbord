@@ -1,7 +1,9 @@
 
 <template>
   <div>
+    <!--
     <div>
+
       <v-btn
         color="primary"
         @click="showFilters = !showFilters"
@@ -22,6 +24,12 @@
         v-model="filters"
       ></filter-panel>
     </v-expand-transition>
+    -->
+      <TableFilterSection
+        :available-columns="visibleHeaders"
+        v-model:filters="filters"
+        @update:filters="handleFilters"
+      />
     <v-divider class="mb-4 mt-4"></v-divider>
     <v-alert
       v-if="error"
@@ -104,6 +112,7 @@ import { ref, computed, onMounted } from 'vue'
 import FilterPanel from '../components/FilterPanel.vue'
 import ColumnManager from '../components/ColumnManager.vue'
 import { CustomerService } from '../services/CustomerService.js'
+import TableFilterSection from '@/components/TableFilterSection.vue'
 
 const customerService = new CustomerService()
 
