@@ -77,7 +77,7 @@ const visibleHeaders = computed(() => {
   return allHeaders.filter(h => visibleColumnKeys.value.includes(h.key))
 })
 
-const title = 'Article X Available Stock'
+const title = 'Article Available Stock'
 
 const fetchStocks = async () => {
   try {

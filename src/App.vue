@@ -4,7 +4,14 @@
       <v-list>
         <v-list-item class="mb-6">
           <v-list-item-title class="text-h5 text-primary">
-            Dashboard DB..
+            <v-img
+              src="src/assets/logo.jpeg"
+              alt="Logo"
+              max-width="170"
+              max-height="170"
+              rounded="circle"
+            ></v-img>
+
           </v-list-item-title>
         </v-list-item>
 
@@ -77,14 +84,9 @@ const menuItems = [
     title: 'Customers',
     icon: 'mdi-account-group',
     path: '/customers'
-  },
-  {
-    title: 'test',
-    icon: 'mdi-account-group',
-    path: '/test'
   }
 ]
-// Compute current page title based on route
+
 const currentPageTitle = computed(() => {
   const currentPath = route.path
   const menuItem = menuItems.find(item => item.path === currentPath)

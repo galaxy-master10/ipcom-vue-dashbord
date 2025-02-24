@@ -42,6 +42,7 @@
           color="primary"
           @click="addFilter"
           :disabled="!canAddFilter"
+          class="ml-3"
         >
           Add Filter
         </v-btn>
