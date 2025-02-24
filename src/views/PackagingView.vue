@@ -25,7 +25,16 @@
       v-model:visibleColumnKeys="visibleColumnKeys"
       @update:page="handlePageChange"
       @update:pageSize="handleItemsPerPageChange"
+      @click:row="handleRowClick"
     ></BaseDataTable>
+
+    <DetailModal
+      v-model="showModal"
+      :item-id="selectedItemId"
+      :fetch-details="fetchItemDetails"
+      :title="'Packaging breakdown Details'"
+      :all-headers="allHeaders"
+    />
 
   </div>
 </template>
@@ -35,6 +44,7 @@ import { ref, computed, onMounted } from 'vue'
 import { ArticlePackagingBreakdownService } from '../services/ArticlePackagingBreakdownService.js'
 import BaseDataTable from '../components/BaseDataTable.vue'
 import TableFilterSection from '../components/TableFilterSection.vue'
+import DetailModal from '@/components/DetailModal.vue'
 
 const breakdownService = new ArticlePackagingBreakdownService()
 const title = 'Breakdown articles'
@@ -44,6 +54,8 @@ const search = ref('')
 const filters = ref([])
 const breakdowns = ref([])
 const error = ref(null)
+const showModal = ref(false)
+const selectedItemId = ref(null)
 const pagination = ref({
   currentPage: 1,
   pageSize: 10,
@@ -51,7 +63,7 @@ const pagination = ref({
   totalPages: 0
 })
 
-// Column Definitions
+
 const allHeaders = [
   // Primary Information
   { title: 'ID', key: 'id', sortable: true, category: 'Primary' },
@@ -121,6 +133,20 @@ const fetchBreakdowns = async () => {
     breakdowns.value = []
   } finally {
     loading.value = false
+  }
+}
+
+const fetchItemDetails = async (id) => {
+  return await breakdownService.getArticlePackagingBreakdownById(id)
+}
+
+
+const handleRowClick = (row) => {
+  if (row && row.id) {
+    selectedItemId.value = row.id;
+    showModal.value = true;
+  } else {
+    console.error('Invalid row data:', row);
   }
 }
 

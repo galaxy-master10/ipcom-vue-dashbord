@@ -25,8 +25,15 @@
       v-model:visibleColumnKeys="visibleColumnKeys"
       @update:page="handlePageChange"
       @update:pageSize="handleItemsPerPageChange"
+      @click:row="handleRowClick"
       ></BaseDataTable>
-
+    <DetailModal
+      v-model="showModal"
+      :item-id="selectedItemId"
+      :fetch-details="fetchItemDetails"
+      :title="'Customer Details'"
+      :all-headers="allHeaders"
+    />
   </div>
 </template>
 
@@ -35,21 +42,25 @@ import { ref, computed, onMounted } from 'vue'
 import { CustomerService } from '../services/CustomerService.js'
 import TableFilterSection from '@/components/TableFilterSection.vue'
 import BaseDataTable from '@/components/BaseDataTable.vue'
+import DetailModal from '@/components/DetailModal.vue'
 
 const customerService = new CustomerService()
 
-// State Management
+
 const loading = ref(true)
 const search = ref('')
 const filters = ref([])
 const customers = ref([])
 const error = ref(null)
+const showModal = ref(false)
+const selectedItemId = ref(null)
 const pagination = ref({
   currentPage: 1,
   pageSize: 10,
   totalItems: 0,
   totalPages: 0
 })
+
 
 const allHeaders = [
   { title: 'ID', key: 'id', sortable: true, category: 'Primary' },
@@ -84,11 +95,14 @@ const visibleColumnKeys = ref([
   'language',
   'createdTS'
 ])
-
 const visibleHeaders = computed(() => {
   return allHeaders.filter(h => visibleColumnKeys.value.includes(h.key))
 })
 
+
+const fetchItemDetails = async (id) => {
+  return await customerService.getCustomerById(id)
+}
 const fetchCustomers = async () => {
   try {
     loading.value = true
@@ -131,6 +145,14 @@ const fetchCustomers = async () => {
 
 
 
+const handleRowClick = (row) => {
+  if (row && row.id) {
+    selectedItemId.value = row.id;
+    showModal.value = true;
+  } else {
+    console.error('Invalid row data:', row);
+  }
+}
 const handleFilters = async (newFilters) => {
   filters.value = [...newFilters];
   pagination.value.currentPage = 1
@@ -148,10 +170,6 @@ const handleItemsPerPageChange = async (newPageSize) => {
   pagination.value.currentPage = 1
   await fetchCustomers()
 }
-
-
-
-
 
 onMounted(() => {
   fetchCustomers()

@@ -25,8 +25,15 @@
       v-model:visibleColumnKeys="visibleColumnKeys"
       @update:page="handlePageChange"
       @update:pageSize="handleItemsPerPageChange"
+      @click:row="handleRowClick"
     ></BaseDataTable>
-
+    <DetailModal
+      v-model="showModal"
+      :item-id="selectedItemId"
+      :fetch-details="fetchItemDetails"
+      :title="'Article Details'"
+      :all-headers="allHeaders"
+    />
   </div>
 </template>
 
@@ -35,6 +42,7 @@ import { ref, computed, onMounted } from 'vue'
 import { ArticleService } from '../services/ArticleService.js'
 import BaseDataTable from '../components/BaseDataTable.vue'
 import TableFilterSection from '../components/TableFilterSection.vue'
+import DetailModal from '@/components/DetailModal.vue'
 
 const articleService = new ArticleService()
 const title = 'Articles'
@@ -44,6 +52,8 @@ const search = ref('')
 const filters = ref([])
 const articles = ref([])
 const error = ref(null)
+const showModal = ref(false)
+const selectedItemId = ref(null)
 const pagination = ref({
   currentPage: 1,
   pageSize: 10,
@@ -123,6 +133,18 @@ const visibleHeaders = computed(() => {
   return allHeaders.filter(h => visibleColumnKeys.value.includes(h.key))
 })
 
+const handleRowClick = (row) => {
+  if (row && row.id) {
+    selectedItemId.value = row.id;
+    showModal.value = true;
+  } else {
+    console.error('Invalid row data:', row);
+  }
+}
+
+const fetchItemDetails = async (id) => {
+  return await articleService.getArticleById(id)
+}
 const fetchArticles = async () => {
   try {
     loading.value = true
@@ -156,6 +178,8 @@ const fetchArticles = async () => {
     loading.value = false
   }
 }
+
+
 const handleFilters = async (newFilters) => {
   filters.value = [...newFilters]
   pagination.value.currentPage = 1

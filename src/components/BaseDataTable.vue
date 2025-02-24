@@ -8,6 +8,8 @@
       :server-items-length="props.pagination.totalItems"
       :page="props.pagination.currentPage"
       :items-per-page="props.pagination.pageSize"
+      hover
+      @click:row="handleRowClick"
     >
       <template v-slot:top>
         <v-toolbar flat>
@@ -27,7 +29,16 @@
           />
         </v-toolbar>
       </template>
-
+      <template v-slot:item="{ item }">
+        <tr
+          @click="handleRowClick(item)"
+          class="cursor-pointer"
+        >
+          <td v-for="header in computedVisibleHeaders" :key="header.key">
+            {{ item[header.key] }}
+          </td>
+        </tr>
+      </template>
       <template v-slot:no-data>
         {{ loading ? 'Loading...' : 'No data available' }}
       </template>
@@ -42,7 +53,6 @@
             @update:page-size="handleItemsPerPageChange"
           />
         </div>
-
 
       </template>
     </v-data-table>
@@ -87,12 +97,15 @@ const props = defineProps({
 const computedVisibleHeaders = computed(() => {
   return props.allHeaders.filter(header => props.visibleColumnKeys.includes(header.key));
 });
-const emit = defineEmits(['update:page', 'update:pageSize', 'update:visibleColumnKeys'])
+const emit = defineEmits(['update:page', 'update:pageSize', 'update:visibleColumnKeys', 'click:row'])
+
 
 const handleItemsPerPageChange = (newSize) => {
   emit('update:pageSize', newSize)
 }
-
+const handleRowClick = (event) => {
+  emit('click:row', event)
+}
 const handlePageChange = (newPage) => {
   console.log('newPage', newPage)
   emit('update:page', newPage)
@@ -107,5 +120,11 @@ const handleColumnUpdate = (newColumns) => {
 .items-per-page-select :deep(.v-field__input) {
   padding-top: 5px;
   padding-bottom: 5px;
+}
+:deep(.v-data-table__tr) {
+  cursor: pointer;
+}
+:deep(.v-data-table__tr:hover) {
+  background-color: red;
 }
 </style>

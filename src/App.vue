@@ -5,10 +5,10 @@
         <v-list-item class="mb-6">
           <v-list-item-title class="text-h5 text-primary">
             <v-img
-              src="src/assets/logo.jpeg"
+              src="src/assets/logo.png"
               alt="Logo"
-              max-width="170"
-              max-height="170"
+              max-width="160"
+              max-height="160"
               rounded="circle"
             ></v-img>
 

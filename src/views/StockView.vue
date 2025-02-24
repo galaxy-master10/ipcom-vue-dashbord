@@ -25,7 +25,15 @@
       v-model:visibleColumnKeys="visibleColumnKeys"
       @update:page="handlePageChange"
       @update:pageSize="handleItemsPerPageChange"
+      @click:row="handleRowClick"
     ></BaseDataTable>
+    <DetailModal
+      v-model="showModal"
+      :item-id="selectedItemId"
+      :fetch-details="fetchItemDetails"
+      :title="'Article available stock Details'"
+      :all-headers="allHeaders"
+    />
 
   </div>
 </template>
@@ -35,6 +43,7 @@ import { ref, computed, onMounted } from 'vue'
 import { ArticleXAvailableStockService } from '../services/ArticleXAvailableStockService.js'
 import TableFilterSection from '@/components/TableFilterSection.vue'
 import BaseDataTable from '@/components/BaseDataTable.vue'
+import DetailModal from '@/components/DetailModal.vue'
 
 const stockService = new ArticleXAvailableStockService()
 
@@ -44,6 +53,8 @@ const search = ref('')
 const filters = ref([])
 const stocks = ref([])
 const error = ref(null)
+const showModal = ref(false)
+const selectedItemId = ref(null)
 const pagination = ref({
   currentPage: 1,
   pageSize: 10,
@@ -110,6 +121,23 @@ const fetchStocks = async () => {
     stocks.value = []
   } finally {
     loading.value = false
+  }
+}
+
+const fetchItemDetails = async (id) => {
+  const response = await stockService.getArticleXAvailableStockById(id);
+  console.log(response.data)
+  return response
+}
+
+
+const handleRowClick = (row) => {
+  if (row && row.articleId ) {
+    console.log(row.articleId)
+    selectedItemId.value = row.articleId;
+    showModal.value = true;
+  } else {
+    console.error('Invalid row data:', row);
   }
 }
 
