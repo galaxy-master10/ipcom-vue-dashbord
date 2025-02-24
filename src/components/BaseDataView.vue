@@ -1,4 +1,4 @@
-<!-- src/views/ArticleXAvailableStockView.vue -->
+<!-- src/components/BaseDataView.vue -->
 <template>
   <div>
     <TableFilterSection
@@ -6,7 +6,7 @@
       v-model:filters="filters"
       @update:filters="handleFilters"
     />
-    <v-divider class="mb-4 mt-4"></v-divider>
+
     <v-alert
       v-if="error"
       type="error"
@@ -17,7 +17,7 @@
 
     <BaseDataTable
       :title="title"
-      :items="stocks"
+      :items="filteredItems"
       :loading="loading"
       :pagination="pagination"
       :visible-headers="visibleHeaders"
@@ -25,25 +25,46 @@
       v-model:visibleColumnKeys="visibleColumnKeys"
       @update:page="handlePageChange"
       @update:pageSize="handleItemsPerPageChange"
-    ></BaseDataTable>
-
+    >
+      <template #item-slots>
+        <slot name="item-slots"></slot>
+      </template>
+    </BaseDataTable>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { ArticleXAvailableStockService } from '../services/ArticleXAvailableStockService.js'
-import TableFilterSection from '@/components/TableFilterSection.vue'
-import BaseDataTable from '@/components/BaseDataTable.vue'
+import TableFilterSection from './TableFilterSection.vue'
+import BaseDataTable from './BaseDataTable.vue'
 
-const stockService = new ArticleXAvailableStockService()
+const props = defineProps({
+  title: {
+    type: String,
+    required: true
+  },
+  service: {
+    type: Object,
+    required: true
+  },
+  allHeaders: {
+    type: Array,
+    required: true
+  },
+  defaultVisibleColumns: {
+    type: Array,
+    required: true
+  }
+})
 
 // State Management
 const loading = ref(true)
 const search = ref('')
 const filters = ref([])
-const stocks = ref([])
+const items = ref([])
 const error = ref(null)
+const visibleColumnKeys = ref(props.defaultVisibleColumns)
+
 const pagination = ref({
   currentPage: 1,
   pageSize: 10,
@@ -51,35 +72,24 @@ const pagination = ref({
   totalPages: 0
 })
 
-// Column Definitions
-const allHeaders = [
-  // Keys
-  { title: 'Article ID', key: 'articleId', sortable: true, category: 'Primary' },
-  { title: 'Company Stock Location ID', key: 'companyStockLocationId', sortable: true, category: 'Primary' },
-
-  // Stock Information
-  { title: 'Available Stock', key: 'availableStock', sortable: true, category: 'Stock Info' },
-  { title: 'Actual Stock', key: 'actualStock', sortable: true, category: 'Stock Info' },
-  { title: 'Minimum Stock', key: 'minimumStock', sortable: true, category: 'Limits' },
-  { title: 'Maximum Stock', key: 'maximumStock', sortable: true, category: 'Limits' }
-]
-
-const visibleColumnKeys = ref([
-  'articleId',
-  'companyStockLocationId',
-  'availableStock',
-  'actualStock',
-  'minimumStock',
-  'maximumStock'
-])
-
 const visibleHeaders = computed(() => {
-  return allHeaders.filter(h => visibleColumnKeys.value.includes(h.key))
+  return props.allHeaders.filter(h => visibleColumnKeys.value.includes(h.key))
 })
 
-const title = 'Article X Available Stock'
+const filteredItems = computed(() => {
+  if (!search.value) return items.value;
 
-const fetchStocks = async () => {
+  const searchTerm = search.value.toLowerCase();
+  return items.value.filter(item => {
+    return visibleHeaders.value.some(header => {
+      const value = item[header.key];
+      if (value === null || value === undefined) return false;
+      return String(value).toLowerCase().includes(searchTerm);
+    });
+  });
+})
+
+const fetchItems = async () => {
   try {
     loading.value = true
     const filterParams = {
@@ -90,13 +100,13 @@ const fetchStocks = async () => {
       search: search.value
     }
 
-    const response = await stockService.getArticleXAvailableStocks(
+    const response = await props.service.getCustomers(
       filterParams,
       pagination.value.currentPage,
       pagination.value.pageSize
     )
 
-    stocks.value = response.data
+    items.value = response.data
     pagination.value = {
       currentPage: response.pageNumber,
       pageSize: response.pageSize,
@@ -107,7 +117,7 @@ const fetchStocks = async () => {
     error.value = null
   } catch (err) {
     error.value = err.message
-    stocks.value = []
+    items.value = []
   } finally {
     loading.value = false
   }
@@ -116,22 +126,21 @@ const fetchStocks = async () => {
 const handleFilters = async (newFilters) => {
   filters.value = [...newFilters]
   pagination.value.currentPage = 1
-  await fetchStocks()
+  await fetchItems()
 }
 
 const handlePageChange = async (newPage) => {
   pagination.value.currentPage = newPage
-  await fetchStocks()
+  await fetchItems()
 }
 
 const handleItemsPerPageChange = async (newPageSize) => {
   pagination.value.pageSize = newPageSize
   pagination.value.currentPage = 1
-  await fetchStocks()
+  await fetchItems()
 }
 
 onMounted(() => {
-  fetchStocks()
+  fetchItems()
 })
 </script>
-

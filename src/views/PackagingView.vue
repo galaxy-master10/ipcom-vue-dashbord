@@ -1,29 +1,12 @@
 <!-- src/views/ArticlePackagingBreakdownView.vue -->
 <template>
   <div>
-    <div>
-      <v-btn
-        color="primary"
-        @click="showFilters = !showFilters"
-        variant="outlined"
-      >
-        <v-icon start>
-          {{ showFilters ? 'mdi-filter-off' : 'mdi-filter' }}
-        </v-icon>
-        {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
-      </v-btn>
-    </div>
-
-    <v-expand-transition>
-      <filter-panel
-        v-if="showFilters"
-        @update:filters="handleFilters"
-        :available-columns="visibleHeaders"
-        v-model="filters"
-      ></filter-panel>
-    </v-expand-transition>
+    <TableFilterSection
+      :available-columns="visibleHeaders"
+      v-model:filters="filters"
+      @update:filters="handleFilters"
+    />
     <v-divider class="mb-4 mt-4"></v-divider>
-
     <v-alert
       v-if="error"
       type="error"
@@ -32,79 +15,32 @@
       {{ error }}
     </v-alert>
 
-    <v-card>
-      <v-data-table
-        :headers="visibleHeaders"
-        :items="filteredBreakdowns"
-        :loading="loading"
-        :items-length="pagination.totalItems"
-        :page="pagination.currentPage"
-        v-model:items-per-page="pagination.pageSize"
-        @update:items-per-page="handleItemsPerPageChange"
-      >
-        <template v-slot:top>
-          <v-toolbar flat>
-            <v-toolbar-title>Article Packaging Breakdowns ({{ pagination.totalItems }} total)</v-toolbar-title>
-            <v-divider class="mx-4" inset vertical></v-divider>
+    <BaseDataTable
+      :title="title"
+      :items="breakdowns"
+      :loading="loading"
+      :pagination="pagination"
+      :visible-headers="visibleHeaders"
+      :all-headers="allHeaders"
+      v-model:visibleColumnKeys="visibleColumnKeys"
+      @update:page="handlePageChange"
+      @update:pageSize="handleItemsPerPageChange"
+    ></BaseDataTable>
 
-            <v-spacer></v-spacer>
-            <div class="text-caption">
-              Page {{ pagination.currentPage }} of {{ pagination.totalPages }}
-            </div>
-            <v-spacer></v-spacer>
-
-            <column-manager
-              v-model="visibleColumnKeys"
-              :columns="allHeaders"
-            />
-          </v-toolbar>
-        </template>
-
-        <template v-slot:no-data>
-          {{ loading ? 'Loading...' : 'No data available' }}
-        </template>
-
-        <template v-slot:bottom>
-          <div class="d-flex align-center justify-space-between px-4">
-            <div class="d-flex align-center">
-              <span class="mr-2">Rows per page:</span>
-              <v-select
-                v-model="pagination.pageSize"
-                :items="[5, 10, 15, 20, 25, 50,100]"
-                variant="outlined"
-                density="compact"
-                hide-details
-                class="items-per-page-select"
-                style="width: 90px"
-                @update:model-value="handleItemsPerPageChange"
-              ></v-select>
-            </div>
-
-            <v-pagination
-              v-model="pagination.currentPage"
-              :length="pagination.totalPages"
-              :total-visible="7"
-              @update:model-value="handlePageChange"
-            ></v-pagination>
-          </div>
-        </template>
-      </v-data-table>
-    </v-card>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import FilterPanel from '../components/FilterPanel.vue'
-import ColumnManager from '../components/ColumnManager.vue'
 import { ArticlePackagingBreakdownService } from '../services/ArticlePackagingBreakdownService.js'
+import BaseDataTable from '../components/BaseDataTable.vue'
+import TableFilterSection from '../components/TableFilterSection.vue'
 
 const breakdownService = new ArticlePackagingBreakdownService()
-
+const title = 'Breakdown articles'
 // State Management
 const loading = ref(true)
 const search = ref('')
-const showFilters = ref(false)
 const filters = ref([])
 const breakdowns = ref([])
 const error = ref(null)
@@ -153,18 +89,6 @@ const visibleHeaders = computed(() => {
   return allHeaders.filter(h => visibleColumnKeys.value.includes(h.key))
 })
 
-const filteredBreakdowns = computed(() => {
-  if (!search.value) return breakdowns.value;
-
-  const searchTerm = search.value.toLowerCase();
-  return breakdowns.value.filter(breakdown => {
-    return visibleHeaders.value.some(header => {
-      const value = breakdown[header.key];
-      if (value === null || value === undefined) return false;
-      return String(value).toLowerCase().includes(searchTerm);
-    });
-  });
-});
 
 const fetchBreakdowns = async () => {
   try {
@@ -222,9 +146,4 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.items-per-page-select :deep(.v-field__input) {
-  padding-top: 5px;
-  padding-bottom: 5px;
-}
-</style>
+

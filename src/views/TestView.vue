@@ -1,48 +1,14 @@
-
-<template>
-  <div>
-      <TableFilterSection
-        :available-columns="visibleHeaders"
-        v-model:filters="filters"
-        @update:filters="handleFilters"
-      />
-    <v-divider class="mb-4 mt-4"></v-divider>
-    <v-alert
-      v-if="error"
-      type="error"
-      class="mb-4"
-    >
-      {{ error }}
-    </v-alert>
-
-    <BaseDataTable
-      :title="title"
-      :items="customers"
-      :loading="loading"
-      :pagination="pagination"
-      :visible-headers="visibleHeaders"
-      :all-headers="allHeaders"
-      v-model:visibleColumnKeys="visibleColumnKeys"
-      @update:page="handlePageChange"
-      @update:pageSize="handleItemsPerPageChange"
-      ></BaseDataTable>
-
-  </div>
-</template>
-
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+
 import { CustomerService } from '../services/CustomerService.js'
+import { onMounted, ref } from 'vue'
+import BaseDataTable from '../components/BaseDataTable.vue'
 import TableFilterSection from '@/components/TableFilterSection.vue'
-import BaseDataTable from '@/components/BaseDataTable.vue'
-
-const customerService = new CustomerService()
-
-// State Management
+import TablePagination from '@/components/TablePagination.vue'
+const customers = ref([])
 const loading = ref(true)
 const search = ref('')
 const filters = ref([])
-const customers = ref([])
 const error = ref(null)
 const pagination = ref({
   currentPage: 1,
@@ -50,7 +16,6 @@ const pagination = ref({
   totalItems: 0,
   totalPages: 0
 })
-
 const allHeaders = [
   { title: 'ID', key: 'id', sortable: true, category: 'Primary' },
   { title: 'Customer ID', key: 'customerId', sortable: true, category: 'Primary' },
@@ -72,7 +37,6 @@ const allHeaders = [
   { title: 'Created', key: 'createdTS', sortable: true, category: 'Additional' }
 ]
 
-const title = "Customers"
 
 const visibleColumnKeys = ref([
   'id',
@@ -84,11 +48,9 @@ const visibleColumnKeys = ref([
   'language',
   'createdTS'
 ])
+const visibleHeaders  = allHeaders.filter(h => visibleColumnKeys.value.includes(h.key))
 
-const visibleHeaders = computed(() => {
-  return allHeaders.filter(h => visibleColumnKeys.value.includes(h.key))
-})
-
+const customerService = new CustomerService()
 const fetchCustomers = async () => {
   try {
     loading.value = true
@@ -99,13 +61,6 @@ const fetchCustomers = async () => {
       }), {}),
       search: search.value
     }
-
-    console.log('Fetching with params:', {
-      filterParams,
-      pageNumber: pagination.value.currentPage,
-      pageSize: pagination.value.pageSize
-    })
-
     const response = await customerService.getCustomers(
       filterParams,
       pagination.value.currentPage,
@@ -128,9 +83,6 @@ const fetchCustomers = async () => {
     loading.value = false
   }
 }
-
-
-
 const handleFilters = async (newFilters) => {
   filters.value = [...newFilters];
   pagination.value.currentPage = 1
@@ -138,10 +90,10 @@ const handleFilters = async (newFilters) => {
 }
 
 const handlePageChange = async (newPage) => {
-  console.log('Changing to page:', newPage)
   pagination.value.currentPage = newPage
   await fetchCustomers()
 }
+
 
 const handleItemsPerPageChange = async (newPageSize) => {
   pagination.value.pageSize = newPageSize
@@ -149,11 +101,35 @@ const handleItemsPerPageChange = async (newPageSize) => {
   await fetchCustomers()
 }
 
-
-
-
-
 onMounted(() => {
   fetchCustomers()
 })
+const title = 'Customers'
 </script>
+
+<template>
+  <div>
+    <TableFilterSection
+      :available-columns="visibleHeaders"
+      v-model:filters="filters"
+      @update:filters="handleFilters"
+    />
+    <BaseDataTable
+      :title="title"
+      :items="customers"
+      :loading="loading"
+      :pagination="pagination"
+      :visible-headers="visibleHeaders"
+      :all-headers="allHeaders"
+      v-model:visibleColumnKeys="visibleColumnKeys"
+      @update:page="handlePageChange"
+      @update:pageSize="handleItemsPerPageChange"
+    ></BaseDataTable>
+
+  </div>
+
+</template>
+
+<style scoped>
+
+</style>

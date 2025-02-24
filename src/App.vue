@@ -77,6 +77,11 @@ const menuItems = [
     title: 'Customers',
     icon: 'mdi-account-group',
     path: '/customers'
+  },
+  {
+    title: 'test',
+    icon: 'mdi-account-group',
+    path: '/test'
   }
 ]
 // Compute current page title based on route
