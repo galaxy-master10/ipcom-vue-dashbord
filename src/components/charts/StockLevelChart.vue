@@ -31,6 +31,7 @@ import {
 import VChart from 'vue-echarts'
 import { ArticleXAvailableStockService } from '@/services/ArticleXAvailableStockService'
 import { ArticleService } from '@/services/ArticleService'
+import { useTheme } from 'vuetify'
 
 // Register ECharts components
 use([
@@ -48,6 +49,12 @@ const articleService = new ArticleService()
 const stockData = ref([])
 const loading = ref(true)
 const error = ref(null)
+const theme = useTheme()
+
+const isDarkMode = computed(() => {
+  return theme.global.name.value === 'dark'
+})
+
 
 const chartOption = computed(() => ({
   tooltip: {
@@ -57,7 +64,10 @@ const chartOption = computed(() => ({
     }
   },
   legend: {
-    data: ['Current Stock', 'Minimum Stock']
+    data: ['Current Stock', 'Minimum Stock'],
+    textStyle: {
+      color: isDarkMode.value ? '#FFFFFF' : '#333333'
+    }
   },
   grid: {
     left: '3%',

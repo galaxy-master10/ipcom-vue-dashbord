@@ -34,4 +34,14 @@ export class ArticleXAvailableStockService {
       throw error;
     }
   }
+
+  async getArticlesXAvailableStockByIdAndCompanyStockLocationId(id, companyStockLocationId) {
+    try {
+      const response = await articleXAvailableStockApi.getByIdAndCompanyStockLocationId(id, companyStockLocationId);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching article available stock:', error);
+      throw error;
+    }
+  }
 }

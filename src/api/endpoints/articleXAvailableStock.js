@@ -15,5 +15,9 @@ export const articleXAvailableStockApi = {
         pageNumber,
         pageSize
       }
-    })
+    }),
+
+  getByIdAndCompanyStockLocationId: (id, companyStockLocationId) =>
+    apiClient.get(`/articleXAvailableStock/${id}/${companyStockLocationId}`),
+
 };

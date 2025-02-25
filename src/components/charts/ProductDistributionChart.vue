@@ -30,6 +30,7 @@ import {
 } from 'echarts/components'
 import VChart from 'vue-echarts'
 import { ArticleService } from '@/services/ArticleService'
+import { useTheme } from 'vuetify'
 
 
 use([
@@ -45,6 +46,11 @@ const articleService = new ArticleService()
 const distributionData = ref([])
 const loading = ref(true)
 const error = ref(null)
+const theme = useTheme()
+
+const isDarkMode = computed(() => {
+  return theme.global.name.value === 'dark'
+})
 
 const chartOption = computed(() => ({
   tooltip: {
@@ -53,7 +59,10 @@ const chartOption = computed(() => ({
   },
   legend: {
     orient: 'vertical',
-    left: 'left'
+    left: 'left',
+    textStyle: {
+      color: isDarkMode.value ? '#FFFFFF' : '#333333'
+    }
   },
   series: [
     {
@@ -62,7 +71,7 @@ const chartOption = computed(() => ({
       avoidLabelOverlap: true,
       itemStyle: {
         borderRadius: 10,
-        borderColor: '#fff',
+        borderColor: isDarkMode.value ? '#333333' : '#FFFFFF',
         borderWidth: 2
       },
       label: {
@@ -73,7 +82,8 @@ const chartOption = computed(() => ({
         label: {
           show: true,
           fontSize: 20,
-          fontWeight: 'bold'
+          fontWeight: 'bold',
+          color: isDarkMode.value ? '#FFFFFF' : '#333333'
         }
       },
       labelLine: {

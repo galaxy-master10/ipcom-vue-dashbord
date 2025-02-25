@@ -55,6 +55,7 @@ const stocks = ref([])
 const error = ref(null)
 const showModal = ref(false)
 const selectedItemId = ref(null)
+const selectedLocationId = ref(null)
 const pagination = ref({
   currentPage: 1,
   pageSize: 10,
@@ -125,16 +126,17 @@ const fetchStocks = async () => {
 }
 
 const fetchItemDetails = async (id) => {
-  const response = await stockService.getArticleXAvailableStockById(id);
+  console.log(id)
+  const response = await stockService.getArticlesXAvailableStockByIdAndCompanyStockLocationId(id, selectedLocationId.value);
   console.log(response.data)
   return response
 }
 
 
 const handleRowClick = (row) => {
-  if (row && row.articleId ) {
-    console.log(row.articleId)
+  if (row && row.articleId && row.companyStockLocationId ) {
     selectedItemId.value = row.articleId;
+    selectedLocationId.value = row.companyStockLocationId;
     showModal.value = true;
   } else {
     console.error('Invalid row data:', row);

@@ -100,7 +100,7 @@ const isOpen = computed({
   set: (value) => emit('update:modelValue', value)
 })
 
-// Group headers by category
+
 const groupedHeaders = computed(() => {
   const grouped = groupBy(props.allHeaders, 'category')
   return Object.entries(grouped).map(([name, headers]) => ({

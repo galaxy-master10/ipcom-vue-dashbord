@@ -30,6 +30,7 @@ import {
 } from 'echarts/components'
 import VChart from 'vue-echarts'
 import { ArticleXAvailableStockService } from '@/services/ArticleXAvailableStockService'
+import { useTheme } from 'vuetify'
 
 // Register components
 use([
@@ -44,6 +45,13 @@ use([
 const stockService = new ArticleXAvailableStockService()
 const loading = ref(true)
 const stockData = ref([])
+const theme = useTheme()
+
+
+const isDarkMode = computed(() => {
+  return theme.global.name.value === 'dark'
+})
+
 
 const chartOption = computed(() => ({
   tooltip: {
@@ -53,7 +61,10 @@ const chartOption = computed(() => ({
     }
   },
   legend: {
-    data: ['Available Stock', 'Actual Stock', 'Minimum Stock']
+    data: ['Available Stock', 'Actual Stock', 'Minimum Stock'],
+    textStyle: {
+      color: isDarkMode.value ? '#FFFFFF' : '#333333'
+    }
   },
   grid: {
     left: '3%',
@@ -65,8 +76,12 @@ const chartOption = computed(() => ({
     type: 'category',
     data: stockData.value.map(item => `Location ${item.companyStockLocationId}`),
     axisLabel: {
-      rotate: 45
-    }
+      rotate: 45,
+      textStyle: {
+        color: isDarkMode.value ? '#FFFFFF' : '#000000'
+      }
+    },
+
   },
   yAxis: {
     type: 'value'
