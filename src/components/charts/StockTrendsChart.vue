@@ -32,7 +32,7 @@ import VChart from 'vue-echarts'
 import { ArticleXAvailableStockService } from '@/services/ArticleXAvailableStockService'
 import { useTheme } from 'vuetify'
 
-// Register components
+
 use([
   CanvasRenderer,
   LineChart,

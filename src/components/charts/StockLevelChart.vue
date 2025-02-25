@@ -33,7 +33,7 @@ import { ArticleXAvailableStockService } from '@/services/ArticleXAvailableStock
 import { ArticleService } from '@/services/ArticleService'
 import { useTheme } from 'vuetify'
 
-// Register ECharts components
+
 use([
   CanvasRenderer,
   BarChart,
