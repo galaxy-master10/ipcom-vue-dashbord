@@ -1,5 +1,9 @@
 <template>
-  <v-menu>
+  <v-menu
+    v-model="menuOpen"
+    :close-on-content-click="false"
+    :close-on-back="true"
+  >
     <template v-slot:activator="{ props }">
       <v-btn
         v-bind="props"
@@ -44,12 +48,23 @@
           ></v-checkbox>
         </div>
       </v-card-text>
+
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          variant="text"
+          @click="menuOpen = false"
+        >
+          Done
+        </v-btn>
+      </v-card-actions>
     </v-card>
   </v-menu>
 </template>
 
 <script setup>
-import {  computed } from 'vue'
+import { ref, computed } from 'vue'
 
 const props = defineProps({
   modelValue: {
@@ -64,7 +79,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-
+const menuOpen = ref(false)
 const REQUIRED_COLUMNS = ['id']
 
 const selectedColumns = computed({
