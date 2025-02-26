@@ -1,7 +1,7 @@
 <!-- src/views/DashboardView.vue -->
 <template>
   <div>
-    <h2 class="text-h4 mb-4">Dashboard</h2>
+    <h2 class="text-h4 mb-4">Dashboard Overview</h2>
 
 
     <metric-cards class="mb-6" />
