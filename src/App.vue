@@ -112,11 +112,8 @@ const microsoftLogin = async () => {
   try {
     authError.value = null;
     await AuthService.login();
-    console.log("log before showing account")
-    console.log(AuthService.account)
 
   } catch (error) {
-    console.error("Login error:", error);
     authError.value = 'Failed to login. Please try again.';
   }
 }
@@ -132,7 +129,7 @@ const checkAuthentication = async () => {
     const response = await AuthService.handleRedirectPromise();
 
     if (response) {
-      console.log("Login successful via redirect");
+
       isAuthenticated.value = true;
     } else {
 
@@ -141,7 +138,6 @@ const checkAuthentication = async () => {
 
     isLoading.value = false;
   } catch (error) {
-    console.error("Authentication check failed:", error);
     authError.value = "Failed to check authentication status. Please try again.";
     isAuthenticated.value = false;
     isLoading.value = false;
@@ -153,7 +149,6 @@ const handleLogout = async () => {
     await AuthService.logout();
     isAuthenticated.value = false;
   } catch (error) {
-    console.error("Logout failed:", error);
     authError.value = "Failed to logout. Please try again.";
   }
 }

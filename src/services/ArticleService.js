@@ -9,7 +9,6 @@ export class ArticleService {
       pageSize = Number(pageSize);
 
       const response = await articleApi.filter(filter, pageNumber, pageSize);
-      console.log('API Response:', response.data);
 
       return {
         data: response.data.data,
@@ -19,7 +18,6 @@ export class ArticleService {
         totalPages: response.data.totalPages
       };
     } catch (error) {
-      console.error('Error fetching articles:', error);
       throw error;
     }
   }

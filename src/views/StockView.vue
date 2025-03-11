@@ -126,9 +126,9 @@ const fetchStocks = async () => {
 }
 
 const fetchItemDetails = async (id) => {
-  console.log(id)
+
   const response = await stockService.getArticlesXAvailableStockByIdAndCompanyStockLocationId(id, selectedLocationId.value);
-  console.log(response.data)
+
   return response
 }
 

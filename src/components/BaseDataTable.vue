@@ -107,7 +107,6 @@ const handleRowClick = (event) => {
   emit('click:row', event)
 }
 const handlePageChange = (newPage) => {
-  console.log('newPage', newPage)
   emit('update:page', newPage)
 }
 

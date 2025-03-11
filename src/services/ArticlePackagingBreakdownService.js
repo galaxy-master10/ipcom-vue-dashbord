@@ -4,13 +4,11 @@ import { articlePackagingBreakdownApi } from '../api/endpoints/articlePackagingB
 export class ArticlePackagingBreakdownService {
   async getArticlePackagingBreakdowns(filter, pageNumber, pageSize) {
     try {
-      console.log('Service sending params:', { filter, pageNumber, pageSize });
 
       pageNumber = Number(pageNumber);
       pageSize = Number(pageSize);
 
       const response = await articlePackagingBreakdownApi.filter(filter, pageNumber, pageSize);
-      console.log('API Response:', response.data);
 
       return {
         data: response.data.data,
@@ -20,7 +18,6 @@ export class ArticlePackagingBreakdownService {
         totalPages: response.data.totalPages
       };
     } catch (error) {
-      console.error('Error fetching article packaging breakdowns:', error);
       throw error;
     }
   }
@@ -30,7 +27,6 @@ export class ArticlePackagingBreakdownService {
       const response = await articlePackagingBreakdownApi.getById(id);
       return response.data;
     } catch (error) {
-      console.error('Error fetching article packaging breakdown:', error);
       throw error;
     }
   }

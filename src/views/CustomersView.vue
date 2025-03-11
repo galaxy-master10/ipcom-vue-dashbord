@@ -114,11 +114,7 @@ const fetchCustomers = async () => {
       search: search.value
     }
 
-    console.log('Fetching with params:', {
-      filterParams,
-      pageNumber: pagination.value.currentPage,
-      pageSize: pagination.value.pageSize
-    })
+
 
     const response = await customerService.getCustomers(
       filterParams,
@@ -160,7 +156,6 @@ const handleFilters = async (newFilters) => {
 }
 
 const handlePageChange = async (newPage) => {
-  console.log('Changing to page:', newPage)
   pagination.value.currentPage = newPage
   await fetchCustomers()
 }

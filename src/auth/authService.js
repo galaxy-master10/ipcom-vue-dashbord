@@ -21,7 +21,6 @@ class AuthService {
       await this.MyMSALObj.initialize();
       this.isInitialized = true;
     } catch (error) {
-      console.error("Failed to initialize MSAL:", error);
       throw error;
     }
   }
@@ -33,7 +32,6 @@ class AuthService {
 
       return this.MyMSALObj.loginRedirect(loginRequest);
     } catch (error) {
-      console.error("Login error:", error);
       throw error;
     }
   }
@@ -51,7 +49,7 @@ class AuthService {
       this.account = null;
       clearApiKey();
     } catch (error) {
-      console.error("Logout error:", error);
+
       throw error;
     }
   }
@@ -89,7 +87,6 @@ class AuthService {
       });
       return response.accessToken;
     } catch (error) {
-      console.error("Token acquisition error:", error);
       if (error.name === "InteractionRequiredAuthError") {
         await this.initialize();
         return this.MyMSALObj.acquireTokenRedirect(loginRequest);
@@ -107,7 +104,6 @@ class AuthService {
       const accounts = this.MyMSALObj.getAllAccounts();
       return accounts.length > 0;
     } catch (error) {
-      console.error("Error checking authentication:", error);
       return false;
     }
   }
@@ -144,10 +140,9 @@ class AuthService {
         this.account = response.account;
       }
 
-      console.log(response)
+
       return response;
     } catch (error) {
-      console.error("Error handling redirect:", error);
       throw error;
     }
   }

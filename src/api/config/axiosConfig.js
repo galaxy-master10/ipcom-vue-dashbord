@@ -76,7 +76,6 @@ const getApiKey = async () => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.log('Error getting API key:', errorText);
       throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
     }
 
@@ -85,7 +84,6 @@ const getApiKey = async () => {
     apiKeyExpirationTime = new Date(data.expiresAt).getTime() - API_KEY_REFRESH_BUFFER;
     return apiKey;
   } catch (error) {
-    console.error("Error fetching API key:", error);
     clearApiKey();
     throw error;
   }
@@ -118,7 +116,6 @@ apiClient.interceptors.request.use(
 
       return config;
     } catch (error) {
-      console.error('Error in request interceptor:', error);
       return Promise.reject(error);
     }
   },
@@ -158,7 +155,6 @@ apiClient.interceptors.response.use(
 
         return apiClient(originalRequest);
       } catch (retryError) {
-        console.error('Error while retrying request:', retryError);
         return Promise.reject(retryError);
       }
     }

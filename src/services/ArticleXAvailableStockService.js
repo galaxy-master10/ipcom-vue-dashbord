@@ -4,13 +4,11 @@ import { articleXAvailableStockApi } from '../api/endpoints/articleXAvailableSto
 export class ArticleXAvailableStockService {
   async getArticleXAvailableStocks(filter, pageNumber, pageSize) {
     try {
-      console.log('Service sending params:', { filter, pageNumber, pageSize });
 
       pageNumber = Number(pageNumber);
       pageSize = Number(pageSize);
 
       const response = await articleXAvailableStockApi.filter(filter, pageNumber, pageSize);
-      console.log('API Response:', response.data);
 
       return {
         data: response.data.data,
@@ -20,7 +18,6 @@ export class ArticleXAvailableStockService {
         totalPages: response.data.totalPages
       };
     } catch (error) {
-      console.error('Error fetching article available stocks:', error);
       throw error;
     }
   }
@@ -30,7 +27,6 @@ export class ArticleXAvailableStockService {
       const response = await articleXAvailableStockApi.getById(id);
       return response.data;
     } catch (error) {
-      console.error('Error fetching article available stock:', error);
       throw error;
     }
   }
@@ -40,7 +36,6 @@ export class ArticleXAvailableStockService {
       const response = await articleXAvailableStockApi.getByIdAndCompanyStockLocationId(id, companyStockLocationId);
       return response.data;
     } catch (error) {
-      console.error('Error fetching article available stock:', error);
       throw error;
     }
   }
