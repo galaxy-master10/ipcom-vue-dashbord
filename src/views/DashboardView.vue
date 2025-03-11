@@ -17,7 +17,6 @@
       </v-col>
     </v-row>
 
-
     <v-row class="mt-4">
       <v-col cols="12">
         <stock-trends-chart />
@@ -26,6 +25,9 @@
     <v-row class="mt-4">
       <v-col cols="12" md="6">
         <brand-distribution-chart />
+      </v-col>
+      <v-col cols="12" md="6">
+        <StockRankingChart />
       </v-col>
     </v-row>
     <v-row class="mt-4">
@@ -43,4 +45,5 @@ import ProductDistributionChart from '@/components/charts/ProductDistributionCha
 import StockTrendsChart from '@/components/charts/StockTrendsChart.vue'
 import BrandDistributionChart from '@/components/charts/BrandDistributionChart.vue'
 import ProductDimensionsChart from '@/components/charts/ProductDimensionsChart.vue'
+import StockRankingChart from '@/components/charts/StockRankingChart.vue'
 </script>
