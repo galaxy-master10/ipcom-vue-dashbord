@@ -1,5 +1,5 @@
 // articles.js (API endpoint)
-import apiClient from '../config/axiosConfig';
+import  apiClient  from '../config/axiosConfig'
 
 export const articleApi = {
   getAll: (pageNumber = 1, pageSize = 10) =>

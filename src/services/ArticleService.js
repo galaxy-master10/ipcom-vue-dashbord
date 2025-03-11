@@ -4,7 +4,6 @@ import { articleApi } from '../api/endpoints/articles.js';
 export class ArticleService {
   async getArticles(filter, pageNumber, pageSize) {
     try {
-      console.log('Service sending params:', { filter, pageNumber, pageSize });
 
       pageNumber = Number(pageNumber);
       pageSize = Number(pageSize);

@@ -114,7 +114,7 @@ const chartOption = computed(() => ({
 const loadData = async () => {
   try {
     loading.value = true
-    const response = await stockService.getArticleXAvailableStocks({}, 1, 50)
+    const response = await stockService.getArticleXAvailableStocks({}, 1, 10)
     stockData.value = response.data
   } catch (error) {
     console.error('Error loading stock trends:', error)
